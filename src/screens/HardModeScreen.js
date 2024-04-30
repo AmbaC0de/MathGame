@@ -17,20 +17,38 @@ export default HardModeScreen = ({})  => {
     const operators = ["+", "-", "*", "/"]
     const operator1 = getRandomOperatorFrom(operators);
     const operator2 = getRandomOperatorFrom(operators);
-    const result = eval(`${a} ${operator1} ${b} ${operator2} ${c}`);
+    // const result = eval(`${a} ${operator1} ${b} ${operator2} ${c}`);
+    const [result, setResult] = useState(0);
 
     const checkResponse = (item) => {
-        if(eval(`${a} ${op[0]} ${b} ${op[1]} ${c}`) === result){
-            setResponse("Correct");
-        }else{
-            setResponse("False")
-        }
+        console.log(op.length);
+        setOp([...op, item]);
+        
+        
     }
 
+    useEffect(()=>{
+        if(op.length == 2){
+            if(eval(`${a} ${op[0]} ${b} ${op[1]} ${c}`) === result){
+                setResponse("Correct");
+            }else{
+                setResponse("False")
+            }
+        }
+    },[op])
+
     useEffect(()=> {
-        setA(getRandomInt(1, 10));
-        setB(getRandomInt(1, 10));
-        setC(getRandomInt(1, 10));
+        const numbers = [
+            getRandomInt(1, 20),
+            getRandomInt(1, 20),
+            getRandomInt(1, 20)
+        ]
+
+        setResult(eval(`${numbers[0]} ${operator1} ${numbers[1]} ${operator2} ${numbers[2]}`))
+
+        setA(numbers[0]);
+        setB(numbers[1]);
+        setC(numbers[2]);
     }, [])
 
 
@@ -61,7 +79,7 @@ export default HardModeScreen = ({})  => {
                             title={item} 
                             style={{width:60}} 
                             // textStyle={{fontSize:28}}
-                            onPress={()=>setOp([...item])}
+                            onPress={()=>checkResponse(item)}
                         />
                     ))}
                 </View>
@@ -78,7 +96,8 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     title: {
-        fontSize: 20,
+        fontSize: 22,
+        margin:10,
         fontWeight: "bold",
         textAlign: "center"
     },
