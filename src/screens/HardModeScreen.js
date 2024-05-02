@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import Operand from "../components/Operand";
 import { useEffect, useState } from "react";
 import { getRandomInt, getRandomOperatorFrom } from "../utils/functions";
+import CountdownTimer from "../components/CountDown";
 
 
 export default HardModeScreen = ({})  => {
@@ -13,6 +14,7 @@ export default HardModeScreen = ({})  => {
     const [a, setA] = useState(0);
     const [b, setB] = useState(0);
     const [c, setC] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(10);
 
     const operators = ["+", "-", "*", "/"]
     const operator1 = getRandomOperatorFrom(operators);
@@ -21,10 +23,8 @@ export default HardModeScreen = ({})  => {
     const [result, setResult] = useState(0);
 
     const checkResponse = (item) => {
-        console.log(op.length);
+        // console.log(op.length);
         setOp([...op, item]);
-        
-        
     }
 
     useEffect(()=>{
@@ -49,6 +49,7 @@ export default HardModeScreen = ({})  => {
         setA(numbers[0]);
         setB(numbers[1]);
         setC(numbers[2]);
+        
     }, [])
 
 
@@ -56,6 +57,10 @@ export default HardModeScreen = ({})  => {
         <View style={styles.container}>
             <View  >
                 <Text style={styles.title}>Hard mode</Text>
+                <View style={styles.timerContainer}>
+                    <Text style={styles.timerText}>Remaing time: </Text>
+                    <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft}/>
+                </View>
                 <View style={styles.operandContainer}>
                     <Operand title={a} />
                     <Operand title={op[0]} />
@@ -80,9 +85,14 @@ export default HardModeScreen = ({})  => {
                             style={{width:60}} 
                             // textStyle={{fontSize:28}}
                             onPress={()=>checkResponse(item)}
+                            disabled={timeLeft == 0 ? true : false}
+
                         />
                     ))}
                 </View>
+                {/* {!timeLeft ? <Text style={styles.lose}>Time is up</Text>: null} */}
+                {!timeLeft && <Text style={styles.lose}>Time is up</Text>}
+                {/* <Text style={styles.timer}>Temps restant : {timeRemaining} s</Text> */}
             </View>
         </View>
     )
@@ -105,7 +115,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center"
     },
-    operandContainer:{
+    operandContainer: {
         flexDirection: "row",
         justifyContent: "center"
     },
@@ -116,5 +126,18 @@ const styles = StyleSheet.create({
         textAlign: "center",
         margin: 5
     },
+    timerText: {
+        fontSize: 18,
+    },
+    timerContainer:{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    lose:{
+        color: "red",
+        textAlign: "center",
+        fontSize: 20
 
+    }
   });
