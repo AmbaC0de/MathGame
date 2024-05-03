@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
     container: {
         width: 50,
         height: 50,
-        // backgroundColor: "blue",
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,
@@ -23,7 +22,6 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 22,
-        // color: "#fff",
         fontWeight:"bold"
     }
 })

@@ -12,7 +12,6 @@ export default Button = ({title, onPress, style, textStyle, disabled}) =>  {
 
 const styles = StyleSheet.create({
     container: {
-        // width: "95%",
         height: 50,
         backgroundColor: "blue",
         justifyContent: "center",

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const CountdownTimer = ({ timeLeft, setTimeLeft }) => {
-//   const [timeLeft, setTimeLeft] = useState(seconds);
+const CountdownTimer = ({ timeLeft, setTimeLeft, stopTimer=false }) => {
 
   useEffect(() => {
     // Sortie anticipée lorsque nous atteignons 0
-    if (timeLeft <= 0) return;
+    if (timeLeft <= 0 || stopTimer === true) return;
 
     // Créez un intervalle pour mettre à jour le temps restant
     const intervalId = setInterval(() => {
@@ -17,12 +16,10 @@ const CountdownTimer = ({ timeLeft, setTimeLeft }) => {
     return () => clearInterval(intervalId);
   }, [timeLeft]);
 
-  // Formattez le temps restant en minutes et secondes
-  const formatTime = (t) => (t < 10 ? '0' + t : t);
+
 
   return (
     <View>
-      {/* <Text>{formatTime(Math.floor(timeLeft / 60))}:{formatTime(timeLeft % 60)}</Text> */}
       <Text style={styles.timerText}>{timeLeft}</Text>
     </View>
   );
