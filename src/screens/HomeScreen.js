@@ -4,13 +4,36 @@ import Button from "../components/Button";
 
 export default HomeScreen = ({navigation})  => {
 
+    const levels = [
+        {
+            name: "Easy mode",
+            operators: ["+", "-"],
+            operandCount: 2,
+            timer: 10,
+            operandRange: 10,
+        },
+        {
+            name: "Hard mode",
+            operators: ["+", "-", "*", "/"],
+            operandCount: 3,
+            timer: 10,
+            operandRange: 20
+        }
+    ]
+
     return (
         <View style={styles.container}>
             <View>
                 <Text style={styles.title}>Choose a mode</Text>
-
-                <Button title={"Easy"} onPress={() => navigation.navigate("EasyMode")}/>
-                <Button title={"Hard"} onPress={() => navigation.navigate("HardMode")}/>
+                {
+                    levels.map((item, index) => (
+                        <Button
+                            title={item.name}
+                            onPress={()=>navigation.navigate(item.name, item )}
+                            key={`${item.name}_${index}`}
+                        />
+                    ))
+                }
             </View>
         </View>
     )

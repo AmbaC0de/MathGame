@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 
 
 export default Operand = ({title, style, textStyle}) =>  {
@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,
-        margin: 2,
+        marginRight: 2,
+        marginTop: 5,
         borderWidth:1
     },
     title: {

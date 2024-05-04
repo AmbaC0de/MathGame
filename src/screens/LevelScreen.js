@@ -2,79 +2,77 @@ import { View, Text, StatusBar, StyleSheet, TouchableOpacity } from "react-nativ
 import Button from "../components/Button";
 import Operand from "../components/Operand";
 import { useEffect, useState } from "react";
-import { getRandomInt, getRandomOperatorFrom } from "../utils/functions";
+import {generateQuestionAndResponse, getRandomInt, getRandomOperatorFrom} from "../utils/functions";
 import CountdownTimer from "../components/CountDown";
 
 
 export default LevelScreen = ({route})  => {
 
     const [response, setResponse] = useState("");
-    const [selectOperator, setSelectOperator] = useState([]);
-    const [radomOperators, setRandomOperators] = useState([]);
-    const [operands, setOperands] = useState({});
+    const [correctAnswer, setCorrectAnswer] = useState("");
+    const [selectedOperators, setSelectedOperators] = useState([]);
+    const [question, setQuestion] = useState([]);
+    const [operands, setOperands] = useState([]);
     const [timeLeft, setTimeLeft] = useState(route.params.timer);
     const [stopTimer, setStopTimer] = useState(false);
+    const [result, setResult] = useState(0);
 
     const operators = route.params.operators;
 
-    const modeParameters = {
-        name: route.params.name,
-        operators : route.params.operators,
-        timer: route.params.timer,
-        operandRange: route.params.operandRange,
+    const modeParameters = route.params;
+
+
+    const chooseOperator = (operator) => {
+        setSelectedOperators([...selectedOperators, operator]);
+
+
+        const index = question.findIndex(item => item === "?");
+        if (index !== -1) {
+            const updatedQuestion = [...question]
+            updatedQuestion[index] = operator;
+            setQuestion(updatedQuestion);
+        }
     }
 
-    const [result, setResult] = useState(0);
+    const checkAnswer = () => {
+        let { response } = generateQuestionAndResponse(operands, selectedOperators);
 
-    const chooseOperator = (item) => {
-        setSelectOperator([...selectOperator, item]);
+        return eval(response) === result;
     }
 
-    const operation = [
-        operands.a,
-        selectOperator[0],
-        operands.b,
-        selectOperator[1],
-        operands.c,
-        "=",
-        result
-    ];
 
     useEffect(() => {
-        if(selectOperator.length == 2){
-            if(eval(`${operands.a} ${selectOperator[0]} ${operands.b} ${selectOperator[1]} ${operands.c}`) === result){
+        if (selectedOperators.length === modeParameters.operandCount - 1){
+            if (checkAnswer()){
                 setResponse("Correct");
                 setStopTimer(true);
-            }else{
-                setResponse("False");
+            }
+            else {
+                setResponse(`The correct answer is: ${correctAnswer}`)
+                setStopTimer(true);
             }
         }
-    },[selectOperator])
+    },[selectedOperators])
 
     useEffect(()=> {
         const randomNumbers = Array.from(
-            {length: 3},
+            {length: modeParameters.operandCount},
             i => getRandomInt(1, modeParameters.operandRange)
         )
 
-        const randomOp = Array.from(
-            {length: 2},
+        const randomOperators = Array.from(
+            {length: modeParameters.operandCount - 1},
             i => getRandomOperatorFrom(operators)
         )
 
-        setRandomOperators(randomOp);
-        setResult(eval(`
-            ${randomNumbers[0]} 
-            ${randomOp[0]} 
-            ${randomNumbers[1]} 
-            ${randomOp[1]} 
-            ${randomNumbers[2]}`)
-        );
-        setOperands({
-            a: randomNumbers[0],
-            b: randomNumbers[1],
-            c: randomNumbers[2]
-        })
+        const {question, response} = generateQuestionAndResponse(randomNumbers, randomOperators);
+
+        console.log("response", response);
+
+        setResult(eval(response));
+        setQuestion(question);
+        setCorrectAnswer(response);
+        setOperands(randomNumbers);
     }, []);
 
 
@@ -83,7 +81,7 @@ export default LevelScreen = ({route})  => {
             <View  >
                 <Text style={styles.title}>{modeParameters.name}</Text>
                 <View style={styles.timerContainer}>
-                    <Text style={styles.timerText}>Remaing time: </Text>
+                    <Text style={styles.timerText}>Remaining time: </Text>
                     <CountdownTimer 
                         timeLeft={timeLeft} 
                         setTimeLeft={setTimeLeft}
@@ -92,35 +90,30 @@ export default LevelScreen = ({route})  => {
                 </View>
                 <View style={styles.operandContainer}>
                     {
-                        operation.map((item, index) => (
+                        question.map((item, index) => (
                             <Operand title={item} key={`${item}-${index}`}/>
                         ))
                     }
                 </View>
                 {
-                    response && <Text style={[
-                                        styles.responseText, 
-                                        {color: response == "Correct" ? "green": "red"}
-                                    ]}>{response}</Text>
+                    response &&
+                    <Text style={[
+                        styles.responseText,
+                        {color: response === "Correct" ? "green": "red"}
+                    ]}>{response}</Text>
                 }
+                {!timeLeft && <Text style={[styles.responseText, {color: "red"}]}>The correct answer is: {correctAnswer}</Text>}
                 <View style={styles.operatorsContainer}>
-                    {operators.map(item =>(
+                    {operators.map(item => (
                         <Button 
                             key={item} 
                             title={item} 
                             style={{width:60}} 
                             onPress={()=>chooseOperator(item)}
-                            disabled={timeLeft == 0 ? true : false}
-
+                            disabled={timeLeft === 0}
                         />
                     ))}
                 </View>
-                {!timeLeft && <Text style={styles.lose}>The correct answer is {"\n"}
-                    {operands.a} 
-                    {radomOperators[0]} 
-                    {operands.b}
-                    {radomOperators[1]}
-                    {operands.c} </Text>}
             </View>
         </View>
     )
@@ -139,15 +132,17 @@ const styles = StyleSheet.create({
     },
     operatorsContainer:{
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+
     },
     operandContainer: {
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        flexWrap: "wrap"
     },
     responseText:{
-        fontSize: 24,
-        fontWeight: "bold",
+        fontSize: 20,
+        fontWeight: "500",
         textAlign: "center",
         margin: 5
     },
@@ -159,10 +154,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
-    lose:{
-        color: "red",
-        textAlign: "center",
-        fontSize: 20
-
-    }
+    // lose:{
+    //     color: "red",
+    //     textAlign: "center",
+    //     fontSize: 20,
+    //     fontWeight: "500",
+    //
+    // }
   });

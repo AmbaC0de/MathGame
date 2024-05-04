@@ -7,20 +7,6 @@ const Stack = createNativeStackNavigator();
 
 export default RootNavigation = () => {
 
-    const easyLevelParameters = {
-        name: "Easy mode",
-        operators: ["+", "-"],
-        timer: 20,
-        operandRange: 10,
-    }
-
-    const hardLevelParameters = {
-        name: "Hard mode",
-        operators: ["+", "-", "*", "/"],
-        timer: 10,
-        operandRange: 20,
-    }
-
 
     return(
         <NavigationContainer>
@@ -30,16 +16,15 @@ export default RootNavigation = () => {
                     component={HomeScreen}
                 />
                 <Stack.Screen
-                    name={"EasyMode"}
+                    name={"Easy mode"}
                     component={LevelScreen}
-                    initialParams={easyLevelParameters}
                 />
 
                 <Stack.Screen
-                    name={"HardMode"}
+                    name={"Hard mode"}
                     component={LevelScreen}
-                    initialParams={hardLevelParameters}
                 />
+
             </Stack.Navigator>
         </NavigationContainer>
     )
