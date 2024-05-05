@@ -6,7 +6,7 @@ import {generateQuestionAndResponse, getRandomInt, getRandomOperatorFrom} from "
 import CountdownTimer from "../components/CountDown";
 
 
-export default LevelScreen = ({route})  => {
+export default LevelScreen = ({route, navigation})  => {
 
     const [response, setResponse] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState("");
@@ -55,6 +55,7 @@ export default LevelScreen = ({route})  => {
     },[selectedOperators])
 
     useEffect(()=> {
+        navigation.setOptions({title: modeParameters.name});
         const randomNumbers = Array.from(
             {length: modeParameters.operandCount},
             i => getRandomInt(1, modeParameters.operandRange)
@@ -82,8 +83,8 @@ export default LevelScreen = ({route})  => {
                 <Text style={styles.title}>{modeParameters.name}</Text>
                 <View style={styles.timerContainer}>
                     <Text style={styles.timerText}>Remaining time: </Text>
-                    <CountdownTimer 
-                        timeLeft={timeLeft} 
+                    <CountdownTimer
+                        timeLeft={timeLeft}
                         setTimeLeft={setTimeLeft}
                         stopTimer={stopTimer}
                     />
@@ -105,10 +106,10 @@ export default LevelScreen = ({route})  => {
                 {!timeLeft && <Text style={[styles.responseText, {color: "red"}]}>The correct answer is: {correctAnswer}</Text>}
                 <View style={styles.operatorsContainer}>
                     {operators.map(item => (
-                        <Button 
-                            key={item} 
-                            title={item} 
-                            style={{width:60}} 
+                        <Button
+                            key={item}
+                            title={item}
+                            style={{width:60}}
                             onPress={()=>chooseOperator(item)}
                             disabled={timeLeft === 0}
                         />

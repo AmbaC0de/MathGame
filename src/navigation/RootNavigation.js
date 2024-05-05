@@ -16,12 +16,7 @@ export default RootNavigation = () => {
                     component={HomeScreen}
                 />
                 <Stack.Screen
-                    name={"Easy mode"}
-                    component={LevelScreen}
-                />
-
-                <Stack.Screen
-                    name={"Hard mode"}
+                    name={"Level"}
                     component={LevelScreen}
                 />
 

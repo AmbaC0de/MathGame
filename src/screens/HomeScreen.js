@@ -29,7 +29,7 @@ export default HomeScreen = ({navigation})  => {
                     levels.map((item, index) => (
                         <Button
                             title={item.name}
-                            onPress={()=>navigation.navigate(item.name, item )}
+                            onPress={()=>navigation.navigate("Level", item )}
                             key={`${item.name}_${index}`}
                         />
                     ))
